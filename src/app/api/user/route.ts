@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
-import printLogToFile from "@/components/lib/printLogToFile";
+import printLogToFile from "@/utils/printLogToFile";
 import { type NextRequest } from "next/server";
-import { prisma } from "@/components/lib/prisma";
+import { prisma } from "@/db/prisma";
 
 export async function GET(req: NextRequest) {
   try {

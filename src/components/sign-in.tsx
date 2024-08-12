@@ -1,5 +1,5 @@
 import { signIn } from "@/app/auth";
-import { Button } from "../components/ui/button";
+import { Button } from "./ui/button";
 import React from "react";
 
 export default function SignIn() {
