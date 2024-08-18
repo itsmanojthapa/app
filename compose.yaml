@@ -1,0 +1,40 @@
+version: "3.8"
+name: app
+
+services:
+  # mongodb:
+  #   image: mongo
+  #   container_name: mongodb
+  #   command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+  #   ports:
+  #     - 27017:27017
+  #   volumes:
+  #     - "mongo_data:/data/db"
+
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: development
+    container_name: app
+    environment:
+      - NEXT_PUBLIC_TINY_EDITOR_API_KEY
+      - AUTH_SECRET
+      - DATABASE_URL
+    ports:
+      - "4000:3000"
+      - "5555:5555"
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app
+      - /app/node_modules
+    # develop:
+    #   watch:
+    #     - path: ./package.json
+    #       action: rebuild
+    #     - path: ./
+    #       target: /app
+    #       action: sync
+# volumes:
+#   mongo_data:

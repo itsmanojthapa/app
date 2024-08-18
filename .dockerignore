@@ -1,0 +1,11 @@
+/build
+/dist
+/node_modules
+/.next
+.env
+.git
+outputLog.json
+.gitignore
+LICENSE
+README.md
+docker-compose.yml
