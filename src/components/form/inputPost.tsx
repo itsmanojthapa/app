@@ -7,8 +7,10 @@ import { Editor as TinyMCEEditor } from "tinymce";
 import Prism from "prismjs";
 import "@/styles/theme.css";
 
+//add glow animation behind component
 const InputPost = () => {
   const [mode, setMode] = useState("");
+  const [status, setStatus] = useState<boolean>(false);
   const editorRef = useRef<TinyMCEEditor | null>(null);
   const data = `
   <h1>Welcome to My Blog!</h1>
@@ -79,47 +81,60 @@ const InputPost = () => {
   }, [postData]);
   return (
     <div className="w-full">
-      <div className="my-10" dangerouslySetInnerHTML={{ __html: postData }} />
-      <Editor
-        initialValue={data}
-        onInit={(_evt, editor) => {
-          editorRef.current = editor;
-          document.querySelector(".tox-statusbar__help-text")!.innerHTML =
-            "Help: Alt or ⌥ + 0 &nbsp;&nbsp;&nbsp;&nbsp; Image: ctrl+c, ctrl+v";
-        }}
-        apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
-        onEditorChange={log}
-        init={{
-          height: 350,
-          menubar: true,
-          plugins: [
-            "advlist",
-            "autolink",
-            "lists",
-            "link",
-            "image",
-            "charmap",
-            "anchor",
-            "searchreplace",
-            "visualblocks",
-            "code",
-            "fullscreen",
-            "codesample",
-            "insertdatetime",
-            "table",
-            "preview",
-            "help",
-            "wordcount",
-          ],
-          toolbar:
-            "undo redo | blocks | " +
-            "bold italic forecolor | alignleft aligncenter " +
-            "alignright alignjustify | outdent indent removeformat" +
-            " | hr link image codesample table  | preview help|",
-          skin: mode == "dark" ? "oxide-dark" : "oxide",
-          content_css: mode == "dark" ? "dark" : "light",
-        }}
-      />
+      {status == false ? (
+        <Editor
+          initialValue={data}
+          onInit={(_evt, editor) => {
+            editorRef.current = editor;
+            document.querySelector(".tox-statusbar__help-text")!.innerHTML =
+              "Help: Alt or ⌥ + 0 &nbsp;&nbsp;&nbsp;&nbsp; Image: ctrl+c, ctrl+v";
+          }}
+          apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
+          onEditorChange={log}
+          init={{
+            height: "100vh",
+            menubar: true,
+            plugins: [
+              "advlist",
+              "autolink",
+              "lists",
+              "link",
+              "image",
+              "charmap",
+              "anchor",
+              "searchreplace",
+              "visualblocks",
+              "code",
+              "fullscreen",
+              "codesample",
+              "insertdatetime",
+              "table",
+              "preview",
+              "help",
+              "wordcount",
+            ],
+            toolbar:
+              "undo redo | blocks | " +
+              "bold italic forecolor | alignleft aligncenter " +
+              "alignright alignjustify | outdent indent removeformat" +
+              " | hr link image codesample table  | preview help|",
+            skin: mode == "dark" ? "oxide-dark" : "oxide",
+            content_css: mode == "dark" ? "dark" : "light",
+          }}
+        />
+      ) : (
+        <div className="my-10" dangerouslySetInnerHTML={{ __html: postData }} />
+      )}
+      <div className="w-full h-10 flex space-x-2 mt-7">
+        <button
+          className="w-full h-full bg-blue-600 rounded-lg"
+          onClick={() => setStatus((e) => !e)}>
+          Preview
+        </button>
+        <button className="w-full h-full bg-green-600 rounded-lg">
+          Submit
+        </button>
+      </div>
     </div>
   );
 };

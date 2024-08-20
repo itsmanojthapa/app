@@ -1,30 +1,47 @@
 import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
 
-// const prisma = new PrismaClient({
-//   log: ["query", "info", "warn", "error"],
-// });
+dotenv.config();
 
-/**This line creates a variable globalForPrisma that references the global object (global). The purpose of this is to ensure that there’s a single 
- * instance of PrismaClient that persists across the lifecycle of the application, especially in a development environment 
- * where modules may be reloaded frequently.
- This line creates a variable globalForPrisma that references the global object (global). The purpose of this is to ensure that there’s a single 
- instance of PrismaClient that persists across the lifecycle of the application, especially in a development environment where modules may be reloaded frequently.
-*/
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-//Create or Reuse PrismaClient Instance
-const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: ["query", "info", "warn", "error"],
-  });
+let prisma: PrismaClient;
+let isConnected = false;
 
-async function connectToDB() {
-  await prisma.$connect();
-  console.log("Connected to DB");
+declare global {
+  // This is necessary to prevent TypeScript from complaining about the global property
+  var prisma: PrismaClient;
 }
 
-// Call the connection function immediately
-connectToDB();
+export async function connectToDB(): Promise<PrismaClient | undefined> {
+  if (!process.env.DATABASE_URL) {
+    console.log("DATABASE not found ❌");
+    return;
+  }
+  if (!prisma) {
+    prisma = new PrismaClient();
+    global.prisma = prisma;
+  }
 
-// Export prisma for use in other files
+  if (!isConnected) {
+    try {
+      await prisma.$connect();
+      // Verify connection by running a simple query
+      try {
+        await prisma.user.findFirst();
+      } catch (error) {
+        console.error("Failed to connect DB ❌:", error);
+        return;
+      }
+      isConnected = true;
+      console.log("Connected to DB 🗄️");
+      return prisma;
+    } catch (error) {
+      console.error("Failed to connect DB ❌:", error);
+      return;
+    }
+  } else {
+    console.log("Already connected to DB 🗄️");
+    return prisma;
+  }
+}
+
 export { prisma };

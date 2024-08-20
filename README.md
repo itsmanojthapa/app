@@ -12,7 +12,8 @@ yarn dev:all
 
 ```bash
 docker build -t app:v0 .
-docker run -p 4000:3000 -p 5555:5555 -e DATABASE_URL="" --name myApp app:v0
+docker build --target development -t app:development .
+docker run -p 4000:3000 -p 5555:5555 -e DATABASE_URL="" --name myApp app:development
 #or
 docker compose up --build
 ```

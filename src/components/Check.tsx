@@ -2,50 +2,21 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useSession, SessionProvider } from "next-auth/react";
 
 export default function Check() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [formData, setFromData] = useState<{
-    name: string;
-    email: string;
-  } | null>(null);
-
-  const handleClick = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData?.name,
-          email: formData?.email,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create user");
-      }
-
-      const data = await response.json();
-      setUserData([...userData, data.user]);
-      setTimeout(() => {}, 5 * 1000);
-    } catch (error) {
-      setError((error as Error).message);
-      console.error("Error creating user:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const [userData, setUserData] = useState<{ name: string; email: string }[]>(
-    []
-  );
-
+  const [userData, setUserData] = useState<
+    { name: string; email: string; password: string; id: string }[]
+  >([]);
   useEffect(() => {
     fetch("/api/user")
       .then((response) => response.json())
@@ -53,44 +24,39 @@ export default function Check() {
       .catch((error) => console.error("Error fetching user data:", error));
   }, []);
 
-  function formChange() {
-    setFromData({
-      //@ts-ignore
-      name: document.querySelector("#name")?.value as string,
-      //@ts-ignore
-      email: document.querySelector("#email")?.value as string,
-    });
-    console.log(formData);
-  }
-
+  const session = useSession();
   return (
-    <div className="flex flex-col justify-center items-center mt-5">
-      <form onChange={formChange} className="flex flex-col">
-        <div>
-          <label htmlFor="name">Name</label>
-          <input type="text" className="border-2" id="name" name="name" />
-        </div>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input type="email" className="border-2" id="email" name="email" />
-        </div>
-      </form>
-      <Button
-        className="font-extrabold text-yellow-500"
-        onClick={handleClick}
-        disabled={loading}>
-        {loading ? "Creating..." : "Create User"}
-      </Button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {userData &&
-        userData.map((user, i) => {
-          return (
-            <div key={i} className="flex space-x-6 mt-5">
-              <div>{user?.name}</div>
-              <div>{user?.email}</div>
-            </div>
-          );
-        })}
-    </div>
+    <SessionProvider>
+      <div className="flex flex-col justify-center items-center mt-5">
+        <h1 className="text-4xl font-bold">
+          Welcome{" "}
+          <span className="text-red-500">{session?.data?.user?.name}</span>
+        </h1>
+        <Table>
+          <TableCaption>A list of your Users.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Email</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Password</TableHead>
+              <TableHead className="text-left">ID</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {userData &&
+              userData.map((user, i) => {
+                return (
+                  <TableRow key={i}>
+                    <TableCell>{user?.email}</TableCell>
+                    <TableCell className="font-medium">{user?.name}</TableCell>
+                    <TableCell>{user?.password}</TableCell>
+                    <TableCell className="text-left">{user?.id}</TableCell>
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+      </div>
+    </SessionProvider>
   );
 }
