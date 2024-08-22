@@ -71,6 +71,7 @@ const InputPost = () => {
   `;
 
   const [postData, setPostData] = useState<string | "">("");
+
   const log = () => {
     if (editorRef.current) {
       setPostData(editorRef.current.getContent());
@@ -80,7 +81,7 @@ const InputPost = () => {
     Prism.highlightAll();
   }, [postData]);
   return (
-    <div className="w-full">
+    <div className="w-full h-full flex flex-col space-y-3">
       {status == false ? (
         <Editor
           initialValue={data}
@@ -92,7 +93,7 @@ const InputPost = () => {
           apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
           onEditorChange={log}
           init={{
-            height: "100vh",
+            height: "100%",
             menubar: true,
             plugins: [
               "advlist",
@@ -123,13 +124,18 @@ const InputPost = () => {
           }}
         />
       ) : (
-        <div className="my-10" dangerouslySetInnerHTML={{ __html: postData }} />
+        <div
+          className="w-full h-full overflow-y-auto"
+          id="preview"
+          dangerouslySetInnerHTML={{ __html: postData }}
+        />
       )}
-      <div className="w-full h-10 flex space-x-2 mt-7">
+
+      <div className="w-full h-10 flex space-x-2">
         <button
           className="w-full h-full bg-blue-600 rounded-lg"
           onClick={() => setStatus((e) => !e)}>
-          Preview
+          {status == false ? "Preview" : "Edit"}
         </button>
         <button className="w-full h-full bg-green-600 rounded-lg">
           Submit

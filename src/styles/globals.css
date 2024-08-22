@@ -71,3 +71,7 @@
 .tox-statusbar__branding {
   display: none !important;
 }
+
+* {
+  box-sizing: border-box;
+}

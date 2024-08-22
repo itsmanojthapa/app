@@ -24,13 +24,12 @@ export default function Check() {
       .catch((error) => console.error("Error fetching user data:", error));
   }, []);
 
-  const session = useSession();
+  const { data: session, status } = useSession();
   return (
     <SessionProvider>
       <div className="flex flex-col justify-center items-center mt-5">
         <h1 className="text-4xl font-bold">
-          Welcome{" "}
-          <span className="text-red-500">{session?.data?.user?.name}</span>
+          Welcome <span className="text-red-500">{session?.user?.name}</span>
         </h1>
         <Table>
           <TableCaption>A list of your Users.</TableCaption>
