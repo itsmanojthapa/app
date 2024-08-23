@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDB } from "@/db/prisma";
 import { compare } from "bcryptjs";
+import { NextResponse } from "next/server";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -119,6 +120,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return false;
     },
+    authorized: async ({ request, auth }) => {
+      if (
+        !auth &&
+        request.nextUrl.pathname !== "/login" &&
+        request.nextUrl.pathname !== "/signup"
+      ) {
+        const newUrl = new URL("/login", request.nextUrl.origin);
+        return NextResponse.redirect(newUrl);
+      }
+    },
   },
   logger: {
     error(error: Error) {
@@ -142,5 +153,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   session: {
     strategy: "jwt",
+    maxAge: 2592000, // 30 days,
+    updateAge: 86400, // 24 hours
   },
 });

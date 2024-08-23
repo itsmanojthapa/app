@@ -25,6 +25,7 @@ export async function connectToDB(): Promise<PrismaClient | undefined> {
       try {
         await prisma.user.findFirst();
       } catch (error) {
+        isConnected = false;
         console.error("Failed to connect DB ❌:", error);
         return;
       }
@@ -32,6 +33,7 @@ export async function connectToDB(): Promise<PrismaClient | undefined> {
       console.log("Connected to DB 🗄️");
       return prisma;
     } catch (error) {
+      isConnected = false;
       console.error("Failed to connect DB ❌:", error);
       return;
     }

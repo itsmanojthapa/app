@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button";
 
 export default async function Home() {
   const session = await auth();
-  if (!session?.user) redirect("/login");
-
   const user = session?.user;
   // const cook = cookies().get("authjs.session-token");
   // console.log(cook);

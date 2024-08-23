@@ -1,9 +1,12 @@
 import { headers } from "next/headers";
-import printLogToFile from "@/utils/printLogToFile";
-import { type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { connectToDB } from "@/db/prisma";
+import { auth } from "@/middleware";
 
-export async function GET(req: NextRequest) {
+export const GET = auth(async function GET(req) {
+  // export async function GET(req: NextRequest) {
+  if (!req.auth)
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   try {
     const searchParams = req.nextUrl.searchParams;
     const email = searchParams.get("email");
@@ -12,7 +15,7 @@ export async function GET(req: NextRequest) {
 
     if (!email) {
       const users = await prisma.user.findMany();
-      return Response.json({ users: users }, { status: 201 });
+      return NextResponse.json({ users: users }, { status: 201 });
     }
     // const headersList = headers();
     // const referer = headersList.get("ifnotfoundUndefinedSoUse!ForNull");
@@ -23,13 +26,13 @@ export async function GET(req: NextRequest) {
     const user = await prisma.user.findFirst({ where: { email: email! } });
 
     if (!user)
-      return Response.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-    return Response.json({ user }, { status: 201 });
+    return NextResponse.json({ user }, { status: 201 });
   } catch (error) {
-    return Response.json({ error: error }, { status: 500 });
+    return NextResponse.json({ error: error }, { status: 500 });
   }
-}
+});
 
 // export async function POST(req: Request) {
 //   try {

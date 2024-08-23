@@ -1,13 +1,10 @@
 export { auth } from "@/app/auth";
 
-import NextAuth from "next-auth";
 import { auth } from "@/app/auth";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export default auth(async function middleware(req: NextRequest) {
-  console.log("------------------------------------------------" + req.url);
-});
+export default auth(async function middleware(req) {});
 
 export const config = {
-  matcher: ["/", "/post"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
