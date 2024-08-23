@@ -1,5 +1,5 @@
 "use server";
-import { connectToDB } from "@/db/prisma";
+import { connectToDB } from "@/core/db/prisma";
 
 var { hash } = require("bcryptjs");
 const saltRounds = 10;

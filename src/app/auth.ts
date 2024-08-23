@@ -1,7 +1,7 @@
 import NextAuth, { AuthError, CredentialsSignin } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { connectToDB } from "@/db/prisma";
+import { connectToDB } from "@/core/db/prisma";
 import { compare } from "bcryptjs";
 import { NextResponse } from "next/server";
 

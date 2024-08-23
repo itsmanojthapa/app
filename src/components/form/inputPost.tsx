@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Editor as TinyMCEEditor } from "tinymce";
 import Prism from "prismjs";
-import "@/styles/theme.css";
+import "@/core/styles/theme.css";
 
 //add glow animation behind component
 const InputPost = () => {

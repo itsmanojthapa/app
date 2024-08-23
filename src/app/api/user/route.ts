@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
-import { connectToDB } from "@/db/prisma";
+import { connectToDB } from "@/core/db/prisma";
 import { auth } from "@/middleware";
 
 export const GET = auth(async function GET(req) {
